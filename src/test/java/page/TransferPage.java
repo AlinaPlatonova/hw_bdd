@@ -1,0 +1,59 @@
+package page;
+
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
+
+import static com.codeborne.selenide.Selenide.$;
+
+public class TransferPage {
+
+    // поле суммы
+    private SelenideElement amountField = $("[data-test-id='amount'] input");
+
+    // поле "Откуда"
+    private SelenideElement fromCardField = $("[data-test-id='from'] input");
+
+    // поле "Куда"
+    //private SelenideElement toCardField = $("[data-test-id='to']");
+
+    // кнопка "Пополнить"
+    private SelenideElement transferButton = $("[data-test-id='action-transfer']");
+
+    // кнопка "Отмена"
+    private SelenideElement cancelButton = $("[data-test-id='action-cancel']");
+
+    // проверяем что мы на странице перевода
+    public TransferPage() {
+        amountField.shouldBe(Condition.visible);
+    }
+
+
+
+    // вводим сумму в поле "Сумма"
+    public void setAmount(int amount) {
+        amountField.setValue(String.valueOf(amount));
+    }
+
+    // вводим номер карты в поле "Откуда"
+    public void setFromCard(String cardLastDigits) {
+        fromCardField.setValue(cardLastDigits);
+    }
+
+    // нажимаем кнопку "пополнить"
+    public void clickTransferButton() {
+        transferButton.click();
+    }
+
+    // метод для нажатия кнопки "Отмена"
+    public void clickCancelButton() {
+        cancelButton.click();
+    }
+
+    // делаем перевод
+    public void makeTransfer(int amount, String fromCardLastDigits) {
+        setAmount(amount);
+        setFromCard(fromCardLastDigits);
+        clickTransferButton();
+    }
+}
+
