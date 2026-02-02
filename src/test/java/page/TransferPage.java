@@ -27,6 +27,11 @@ public class TransferPage {
         amountField.shouldBe(Condition.visible);
     }
 
+    public void setFromCard(String cardNumber) {
+        // Убираем пробелы для ввода (маска сама их добавит)
+        String cleanNumber = cardNumber.replace(" ", "");
+        fromCardField.setValue(cleanNumber);
+    }
 
 
     // вводим сумму в поле "Сумма"
@@ -34,10 +39,6 @@ public class TransferPage {
         amountField.setValue(String.valueOf(amount));
     }
 
-    // вводим номер карты в поле "Откуда"
-    public void setFromCard(String cardLastDigits) {
-        fromCardField.setValue(cardLastDigits);
-    }
 
     // нажимаем кнопку "пополнить"
     public void clickTransferButton() {
@@ -49,10 +50,10 @@ public class TransferPage {
         cancelButton.click();
     }
 
-    // делаем перевод
-    public void makeTransfer(int amount, String fromCardLastDigits) {
+    // ИЗМЕНЕНИЕ: передаем полный номер карты
+    public void makeTransfer(int amount, String fromCardNumber) {
         setAmount(amount);
-        setFromCard(fromCardLastDigits);
+        setFromCard(fromCardNumber);
         clickTransferButton();
     }
 }

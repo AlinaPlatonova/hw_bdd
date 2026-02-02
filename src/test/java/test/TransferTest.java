@@ -51,9 +51,9 @@ public class TransferTest {
         // переводим 500 рублей с второй карты на первую
         int transferAmount = 500;
 
-        // берем последние 4 цифры второй карты
-        String secondCardLastDigits = secondCardInfo.getCardNumber().substring(15);
-        transferPage.makeTransfer(transferAmount, secondCardLastDigits);
+        // берем полный номер второй карты
+        String secondCardFullNumber = secondCardInfo.getCardNumber();
+        transferPage.makeTransfer(transferAmount, secondCardFullNumber);
 
         // после перевода снова открываем страницу с картами
         DashboardPage dashboardPageAfter = new DashboardPage();
@@ -109,9 +109,9 @@ public class TransferTest {
         // переводим 1000 рублей с первой карты на вторую
         int transferAmount = 1000;
 
-        // берем последние 4 цифры первой карты
-        String firstCardLastDigits = firstCardInfo.getCardNumber().substring(15);
-        transferPage.makeTransfer(transferAmount, firstCardLastDigits);
+        // берем полный номер первой карты
+        String firstCardFullNumber = firstCardInfo.getCardNumber();
+        transferPage.makeTransfer(transferAmount, firstCardFullNumber);
 
         // после перевода снова открываем страницу с картами
         DashboardPage dashboardPageAfter = new DashboardPage();
