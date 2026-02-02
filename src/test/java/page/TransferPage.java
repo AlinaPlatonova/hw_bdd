@@ -28,7 +28,6 @@ public class TransferPage {
     }
 
     public void setFromCard(String cardNumber) {
-        // Убираем пробелы для ввода (маска сама их добавит)
         String cleanNumber = cardNumber.replace(" ", "");
         fromCardField.setValue(cleanNumber);
     }
@@ -50,7 +49,7 @@ public class TransferPage {
         cancelButton.click();
     }
 
-    // ИЗМЕНЕНИЕ: передаем полный номер карты
+    // передаем полный номер карты
     public void makeTransfer(int amount, String fromCardNumber) {
         setAmount(amount);
         setFromCard(fromCardNumber);

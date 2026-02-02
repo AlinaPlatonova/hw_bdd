@@ -105,7 +105,6 @@ public class TransferTest {
         TransferPage transferPage = dashboardPage.selectCardToReplenish(secondCardInfo);
 
 
-
         // переводим 1000 рублей с первой карты на вторую
         int transferAmount = 1000;
 
