@@ -1,13 +1,16 @@
 package test;
 
+import com.codeborne.selenide.Condition;
 import data.DataHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
 import page.DashboardPage;
 import page.LoginPage;
 import page.TransferPage;
 import page.VerificationPage;
 
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -128,6 +131,106 @@ public class TransferTest {
         assertEquals(firstCardStartBalance - transferAmount, firstCardEndBalance,
                 "Баланс первой карты должен быть: " + (firstCardStartBalance - transferAmount) +
                         ", но получили: " + firstCardEndBalance);
+    }
+
+    @Test
+    void shouldTransferMoreAmountThanBalanceOnCard() {
+        // получаем данные для входа
+        DataHelper.AuthInfo authInfo = DataHelper.getAuthInfo();
+
+        // получаем код подтверждения
+        DataHelper.VerificationCode verificationCode = DataHelper.getVerificationCodeFor(authInfo);
+
+        // получаем информацию о картах
+        DataHelper.CardInfo firstCardInfo = DataHelper.getFirstCardInfo();
+        DataHelper.CardInfo secondCardInfo = DataHelper.getSecondCardInfo();
+
+        // логинимся
+        LoginPage loginPage = new LoginPage();
+        loginPage.validLogin(authInfo);
+
+        // вводим код подтверждения
+        VerificationPage verificationPage = new VerificationPage();
+        verificationPage.validVerify(verificationCode);
+
+        // проверяем что мы на странице с картами
+        DashboardPage dashboardPage = new DashboardPage();
+
+        // получаем балансы карт до перевода
+        int firstCardStartBalance = dashboardPage.getCardBalance(firstCardInfo);
+        int secondCardStartBalance = dashboardPage.getCardBalance(secondCardInfo);
+
+        // выбираем первую карту для пополнения
+        TransferPage transferPage = dashboardPage.selectCardToReplenish(firstCardInfo);
+
+        // переводим 10 001 рублей с второй карты на первую
+        int transferAmount = 10001;
+
+        // берем полный номер второй карты
+        String secondCardFullNumber = secondCardInfo.getCardNumber();
+        transferPage.makeTransfer(transferAmount, secondCardFullNumber);
+
+        // после перевода снова открываем страницу с картами
+        DashboardPage dashboardPageAfter = new DashboardPage();
+
+        // получаем балансы карт после перевода
+        int firstCardEndBalance = dashboardPageAfter.getCardBalance(firstCardInfo);
+        int secondCardEndBalance = dashboardPageAfter.getCardBalance(secondCardInfo);
+
+        // проверяем, что балансы не изменились, перевод не произошел
+        assertEquals(firstCardStartBalance, firstCardEndBalance,
+                "Баланс первой карты не должен измениться при попытке перевода суммы, превышающей баланс");
+        assertEquals(secondCardStartBalance, secondCardEndBalance,
+                "Баланс второй карты не должен измениться при попытке перевода суммы, превышающей баланс");
+    }
+
+    @Test
+    void shouldNotTransferNegativeAmount() {
+        // получаем данные для входа
+        DataHelper.AuthInfo authInfo = DataHelper.getAuthInfo();
+
+        // получаем код подтверждения
+        DataHelper.VerificationCode verificationCode = DataHelper.getVerificationCodeFor(authInfo);
+
+        // получаем информацию о картах
+        DataHelper.CardInfo firstCardInfo = DataHelper.getFirstCardInfo();
+        DataHelper.CardInfo secondCardInfo = DataHelper.getSecondCardInfo();
+
+        // логинимся
+        LoginPage loginPage = new LoginPage();
+        loginPage.validLogin(authInfo);
+
+        // вводим код подтверждения
+        VerificationPage verificationPage = new VerificationPage();
+        verificationPage.validVerify(verificationCode);
+
+        // проверяем что мы на странице с картами
+        DashboardPage dashboardPage = new DashboardPage();
+
+        // получаем начальные балансы
+        int firstCardStartBalance = dashboardPage.getCardBalance(firstCardInfo);
+        int secondCardStartBalance = dashboardPage.getCardBalance(secondCardInfo);
+
+        // выбираем первую карту для пополнения
+        TransferPage transferPage = dashboardPage.selectCardToReplenish(firstCardInfo);
+
+        // переводим отрицательную сумму
+        int negativeAmount = -500;
+
+        // выполняем перевод с отрицательной суммой
+        String secondCardFullNumber = secondCardInfo.getCardNumber();
+        transferPage.makeTransfer(negativeAmount, secondCardFullNumber);
+
+        // получаем балансы после попытки перевода
+        DashboardPage dashboardPageAfter = new DashboardPage();
+        int firstCardEndBalance = dashboardPageAfter.getCardBalance(firstCardInfo);
+        int secondCardEndBalance = dashboardPageAfter.getCardBalance(secondCardInfo);
+
+        // Проверяем, что балансы не изменились
+        assertEquals(firstCardStartBalance, firstCardEndBalance,
+                "Баланс первой карты не должен измениться при попытке перевода отрицательной суммы");
+        assertEquals(secondCardStartBalance, secondCardEndBalance,
+                "Баланс второй карты не должен измениться при попытке перевода отрицательной суммы");
     }
 
 }

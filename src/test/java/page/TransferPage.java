@@ -8,7 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class TransferPage {
 
     // поле суммы
-    private SelenideElement amountField = $("[data-test-id='amount'] input");
+    public SelenideElement amountField = $("[data-test-id='amount'] input");
 
     // поле "Откуда"
     private SelenideElement fromCardField = $("[data-test-id='from'] input");
