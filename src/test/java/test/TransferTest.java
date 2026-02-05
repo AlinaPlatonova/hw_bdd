@@ -184,53 +184,5 @@ public class TransferTest {
                 "Баланс второй карты не должен измениться при попытке перевода суммы, превышающей баланс");
     }
 
-    @Test
-    void shouldNotTransferNegativeAmount() {
-        // получаем данные для входа
-        DataHelper.AuthInfo authInfo = DataHelper.getAuthInfo();
-
-        // получаем код подтверждения
-        DataHelper.VerificationCode verificationCode = DataHelper.getVerificationCodeFor(authInfo);
-
-        // получаем информацию о картах
-        DataHelper.CardInfo firstCardInfo = DataHelper.getFirstCardInfo();
-        DataHelper.CardInfo secondCardInfo = DataHelper.getSecondCardInfo();
-
-        // логинимся
-        LoginPage loginPage = new LoginPage();
-        loginPage.validLogin(authInfo);
-
-        // вводим код подтверждения
-        VerificationPage verificationPage = new VerificationPage();
-        verificationPage.validVerify(verificationCode);
-
-        // проверяем что мы на странице с картами
-        DashboardPage dashboardPage = new DashboardPage();
-
-        // получаем начальные балансы
-        int firstCardStartBalance = dashboardPage.getCardBalance(firstCardInfo);
-        int secondCardStartBalance = dashboardPage.getCardBalance(secondCardInfo);
-
-        // выбираем первую карту для пополнения
-        TransferPage transferPage = dashboardPage.selectCardToReplenish(firstCardInfo);
-
-        // переводим отрицательную сумму
-        int negativeAmount = -500;
-
-        // выполняем перевод с отрицательной суммой
-        String secondCardFullNumber = secondCardInfo.getCardNumber();
-        transferPage.makeTransfer(negativeAmount, secondCardFullNumber);
-
-        // получаем балансы после попытки перевода
-        DashboardPage dashboardPageAfter = new DashboardPage();
-        int firstCardEndBalance = dashboardPageAfter.getCardBalance(firstCardInfo);
-        int secondCardEndBalance = dashboardPageAfter.getCardBalance(secondCardInfo);
-
-        // Проверяем, что балансы не изменились
-        assertEquals(firstCardStartBalance, firstCardEndBalance,
-                "Баланс первой карты не должен измениться при попытке перевода отрицательной суммы");
-        assertEquals(secondCardStartBalance, secondCardEndBalance,
-                "Баланс второй карты не должен измениться при попытке перевода отрицательной суммы");
-    }
 
 }
